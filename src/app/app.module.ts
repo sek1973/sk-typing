@@ -1,5 +1,7 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatFileUploadModule, MatFileUploadQueue } from 'angular-material-fileupload';
 
 import { AppComponent } from './app.component';
 
@@ -8,9 +10,10 @@ import { AppComponent } from './app.component';
     AppComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    MatFileUploadModule,
+    MatButtonModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
