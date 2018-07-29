@@ -4,18 +4,16 @@
     Welcome to {{ title }}!
   </h1>
 </div>
-<label for="singleFile">Upload file</label>
-<input id="singleFile" type="file" [fileUploadInputFor]= "fileUploadQueue"/>
-<br>
 
-<mat-file-upload-queue #fileUploadQueue
-  [fileAlias]="'file'"
-  [httpUrl]="'http://localhost:5000'">
+<form [formGroup]="formDoc" (ngSubmit)="onSubmit(formDoc)" novalidate>
+  <mat-form-field>
+    <ngx-mat-file-input
+      formControlName="basicFile"
+      (change)="onSelectFile($event)"
+      placeholder="Please, choose text file to upload..." >
+    </ngx-mat-file-input>
+    <mat-icon matSuffix>folder</mat-icon>
+  </mat-form-field>
+</form>
 
-  <mat-file-upload
-    [file]="file"
-    [id]="i"
-    *ngFor="let file of fileUploadQueue.files; let i = index">
-  </mat-file-upload>
-</mat-file-upload-queue>
-
+<p>{{text}}</p>

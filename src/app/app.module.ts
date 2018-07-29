@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule, MatIconModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
-import { MatFileUploadModule, MatFileUploadQueue } from 'angular-material-fileupload';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
 
 import { AppComponent } from './app.component';
 
@@ -11,9 +13,14 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    MatFileUploadModule,
-    MatButtonModule
+    MaterialFileInputModule,
+    MatIconModule,
+    MatFormFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ],
+  providers: [ FormBuilder ]
 })
 export class AppModule { }
