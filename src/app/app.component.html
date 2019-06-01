@@ -5,15 +5,15 @@
   </h1>
 </div>
 
-<form [formGroup]="formDoc" (ngSubmit)="onSubmit(formDoc)" novalidate>
-  <mat-form-field>
+<form [formGroup]="form" (ngSubmit)="onSubmit(form)" novalidate>
+  <mat-form-field [ngStyle]="{'display': fileInputDisplay}">
     <ngx-mat-file-input
-      formControlName="basicFile"
+      formControlName="file"
       (change)="onSelectFile($event)"
-      placeholder="Please, choose text file to upload..." >
+      placeholder="Please, choose text file to upload...">
     </ngx-mat-file-input>
     <mat-icon matSuffix>folder</mat-icon>
   </mat-form-field>
 </form>
 
-<p>{{text}}</p>
+<p id="tekst">{{text}}</p>

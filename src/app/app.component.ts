@@ -1,6 +1,7 @@
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
-import { FileValidator } from 'ngx-material-file-input';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { FileUploadService } from './fileupload.service';
 
 @Component({
   selector: 'app-root',
@@ -9,30 +10,46 @@ import { FileValidator } from 'ngx-material-file-input';
 })
 export class AppComponent implements OnInit {
   title = 'SK Typing';
-  formDoc: FormGroup;
+  form: FormGroup;
   maxSize = 100;
   text = '';
+  fileInputDisplay = 'flex';
+  private mutationObserver: MutationObserver;
 
-  constructor(private _fb: FormBuilder) { }
+  constructor(private _fb: FormBuilder,
+    private fileUpload: FileUploadService) { }
 
   ngOnInit() {
-    this.formDoc = this._fb.group({
-      basicFile: []
+    this.mutationObserver = new MutationObserver((mutations) => {
+      this.fileInputDisplay = 'flex';
+    });
+
+    const node = document.querySelector('p[id="tekst"]');
+
+    this.mutationObserver.observe(node, {
+      attributes: true,
+      childList: true,
+      characterData: true,
+      subtree: true
+    });
+
+    this.form = this._fb.group({
+      file: []
+    });
+
+    this.fileUpload.onLoadStart().subscribe((txt) => {
+      this.fileInputDisplay = 'none';
+    });
+    this.fileUpload.onProgress().subscribe((val) => console.log(`Loaded: ${val}%`));
+    this.fileUpload.onLoadEnd().subscribe((txt) => {
+      this.text = txt;
     });
   }
 
   onSubmit(form: FormGroup) {}
 
   onSelectFile(event) {
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-
-      reader.readAsText(event.target.files[0], 'windows-1250'); // read file as data url
-
-      reader.onload = (e) => { // called once readAsDataURL is completed
-        this.text = e.target.result;
-      };
-    }
+    this.fileUpload.uploadText(event);
   }
 
 }
