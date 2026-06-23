@@ -16,6 +16,8 @@ export interface WordState {
 export interface TestResult {
     wpm: number;
     rawWpm: number;
+    cpm: number;
+    rawCpm: number;
     accuracy: number;
     correctChars: number;
     incorrectChars: number;
@@ -196,11 +198,13 @@ export class TypingService {
         const minutes = elapsed / 60;
         const wpm = Math.round(correctChars / 5 / minutes);
         const rawWpm = Math.round(totalTypedChars / 5 / minutes);
+        const cpm = Math.round(correctChars / minutes);
+        const rawCpm = Math.round(totalTypedChars / minutes);
         const accuracy = totalTypedChars > 0
             ? Math.round((correctChars / totalTypedChars) * 100)
             : 100;
 
-        this.result.set({ wpm, rawWpm, accuracy, correctChars, incorrectChars, elapsedSeconds: Math.round(elapsed) });
+        this.result.set({ wpm, rawWpm, cpm, rawCpm, accuracy, correctChars, incorrectChars, elapsedSeconds: Math.round(elapsed) });
     }
 
     reset(): void {
