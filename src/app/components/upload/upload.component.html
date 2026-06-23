@@ -1,0 +1,54 @@
+<div class="upload-page">
+    <div class="card">
+        <h2 class="title">Upload a text file</h2>
+        <p class="sub">Words will be extracted from your file and used as the typing test source.</p>
+
+        <!-- Drop zone -->
+        <div class="drop-zone"
+             [class.dragging]="isDragging()"
+             [class.loaded]="fileName()"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave()"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+            @if (!fileName()) {
+            <div class="drop-icon">&#x1F4C4;</div>
+            <p class="drop-label">Drag &amp; drop a <strong>.txt</strong> or <strong>.md</strong> file here</p>
+            <p class="drop-sub">or click to browse</p>
+            } @else {
+            <div class="drop-icon success">&#x2714;</div>
+            <p class="drop-label">{{ fileName() }}</p>
+            <p class="drop-sub">{{ wordCount() }} words loaded &mdash; click to replace</p>
+            }
+        </div>
+
+        <input #fileInput
+               type="file"
+               accept=".txt,.md,text/plain,text/markdown"
+               class="hidden-input"
+               (change)="onFileSelected($event)" />
+
+        @if (error()) {
+        <p class="error">{{ error() }}</p>
+        }
+
+        <!-- Preview -->
+        @if (preview().length > 0) {
+        <div class="preview">
+            <span class="preview-label">Preview:</span>
+            {{ preview().join(' ') }}&hellip;
+        </div>
+        }
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn-secondary"
+                    (click)="cancel()">Cancel</button>
+            <button class="btn-primary"
+                    [disabled]="!fileName()"
+                    (click)="startTest()">
+                Start typing test
+            </button>
+        </div>
+    </div>
+</div>

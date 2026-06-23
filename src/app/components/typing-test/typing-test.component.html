@@ -1,0 +1,79 @@
+<div class="test-page"
+     (click)="focusInput()">
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="time-options">
+            @for (t of timeLimits; track t) {
+            <button class="time-btn"
+                    [class.active]="typing.timeLimit() === t"
+                    [disabled]="typing.status() === 'running'"
+                    (click)="$event.stopPropagation(); setTimeLimit(t)">
+                {{ t }}s
+            </button>
+            }
+        </div>
+        <a class="upload-link"
+           routerLink="/upload"
+           (click)="$event.stopPropagation()">
+            Upload text
+        </a>
+    </div>
+
+    <!-- Timer -->
+    @if (typing.status() === 'running' || typing.status() === 'finished') {
+    <div class="timer"
+         [class.low]="typing.timeLeft() <= 10">
+        {{ typing.timeLeft() }}
+    </div>
+    }
+
+    <!-- Words display -->
+    @if (typing.status() !== 'finished') {
+    <div class="words-wrapper"
+         (click)="focusInput()">
+        <div class="words"
+             #wordsContainer>
+            @for (word of typing.words(); track $index; let wi = $index) {
+            <span class="word"
+                  [class.active]="wi === typing.currentWordIndex()"
+                  [class.correct]="word.status === 'correct'"
+                  [class.incorrect]="word.status === 'incorrect'">
+                @for (c of word.chars; track $index) {
+                <span class="char"
+                      [class.correct]="c.status === 'correct'"
+                      [class.incorrect]="c.status === 'incorrect' || c.status === 'extra'"
+                      [class.pending]="c.status === 'pending'"
+                      [class.extra]="c.status === 'extra'">{{ c.char }}</span>
+                }
+                @if (wi === typing.currentWordIndex() && typing.status() === 'running') {
+                <span class="cursor"></span>
+                }
+            </span>
+            }
+        </div>
+    </div>
+
+    <!-- Hidden input -->
+    <input #inputEl
+           class="hidden-input"
+           type="text"
+           autocomplete="off"
+           autocorrect="off"
+           autocapitalize="off"
+           spellcheck="false"
+           [value]="typing.currentInput()"
+           (input)="onInput($event)"
+           (keydown)="onKeydown($event)"
+           [disabled]="typing.status() === 'finished'" />
+
+    @if (typing.status() === 'idle') {
+    <p class="hint">Start typing to begin &mdash; <kbd>Tab</kbd> to restart &mdash; <kbd>Esc</kbd> to reset</p>
+    }
+    }
+
+    <!-- Results -->
+    @if (typing.status() === 'finished' && typing.result(); as result) {
+    <app-results [result]="result"
+                 (restart)="restart()" />
+    }
+</div>

@@ -1,0 +1,39 @@
+<div class="results">
+    <div class="stats">
+        <div class="stat primary">
+            <span class="value">{{ result().wpm }}</span>
+            <span class="label">wpm</span>
+        </div>
+        <div class="stat primary">
+            <span class="value">{{ result().accuracy }}%</span>
+            <span class="label">accuracy</span>
+        </div>
+    </div>
+
+    <div class="stats secondary-row">
+        <div class="stat">
+            <span class="value">{{ result().rawWpm }}</span>
+            <span class="label">raw</span>
+        </div>
+        <div class="stat">
+            <span class="value">{{ result().correctChars }}</span>
+            <span class="label">correct chars</span>
+        </div>
+        <div class="stat">
+            <span class="value">{{ result().incorrectChars }}</span>
+            <span class="label">incorrect chars</span>
+        </div>
+        <div class="stat">
+            <span class="value">{{ result().elapsedSeconds }}s</span>
+            <span class="label">time</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-restart"
+                (click)="onRestart()"
+                title="Tab to restart">
+            Restart &mdash; <kbd>Tab</kbd>
+        </button>
+    </div>
+</div>

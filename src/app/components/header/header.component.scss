@@ -1,0 +1,40 @@
+:host {
+    display: block;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--color-sub-alt);
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+
+    .accent {
+        color: var(--color-accent);
+    }
+}
+
+.nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-link {
+    color: var(--color-sub);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+
+    &:hover,
+    &.active {
+        color: var(--color-accent);
+    }
+}
