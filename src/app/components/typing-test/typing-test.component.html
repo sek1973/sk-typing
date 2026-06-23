@@ -38,14 +38,19 @@
                   [class.active]="wi === typing.currentWordIndex()"
                   [class.correct]="word.status === 'correct'"
                   [class.incorrect]="word.status === 'incorrect'">
-                @for (c of word.chars; track $index) {
+                @for (c of word.chars; track $index; let ci = $index) {
+                @if (wi === typing.currentWordIndex() && ci === typing.currentInput().length && (typing.status() ===
+                'running' || typing.status() === 'idle')) {
+                <span class="cursor"></span>
+                }
                 <span class="char"
                       [class.correct]="c.status === 'correct'"
                       [class.incorrect]="c.status === 'incorrect' || c.status === 'extra'"
                       [class.pending]="c.status === 'pending'"
                       [class.extra]="c.status === 'extra'">{{ c.char }}</span>
                 }
-                @if (wi === typing.currentWordIndex() && typing.status() === 'running') {
+                @if (wi === typing.currentWordIndex() && typing.currentInput().length >= word.chars.length &&
+                (typing.status() === 'running' || typing.status() === 'idle')) {
                 <span class="cursor"></span>
                 }
             </span>
