@@ -9,6 +9,7 @@ export interface CharState {
 
 export interface WordState {
     chars: CharState[];
+    originalLength: number;
     status: 'pending' | 'active' | 'correct' | 'incorrect';
 }
 
@@ -44,6 +45,7 @@ export class TypingService {
         this.reset();
         const wordStates: WordState[] = wordList.map((w, i) => ({
             chars: w.split('').map(c => ({ char: c, status: 'pending' as const })),
+            originalLength: w.length,
             status: i === 0 ? 'active' : 'pending',
         }));
         this.words.set(wordStates);
@@ -69,7 +71,8 @@ export class TypingService {
 
         // Update char states for the current word
         const typedChars = input.split('');
-        const updatedChars: CharState[] = currentWord.chars.map((c, i) => {
+        const originalLength = currentWord.originalLength;
+        const updatedChars: CharState[] = currentWord.chars.slice(0, originalLength).map((c, i) => {
             if (i < typedChars.length) {
                 return { char: c.char, status: typedChars[i] === c.char ? 'correct' : 'incorrect' };
             }
@@ -78,7 +81,7 @@ export class TypingService {
 
         // Extra characters typed beyond the word length
         const extraChars: CharState[] = typedChars
-            .slice(currentWord.chars.length)
+            .slice(originalLength)
             .map(c => ({ char: c, status: 'extra' as const }));
 
         words[idx] = { ...currentWord, chars: [...updatedChars, ...extraChars] };
@@ -93,14 +96,14 @@ export class TypingService {
         if (!currentWord) return;
 
         // Mark word as correct/incorrect
+        const originalLength = currentWord.originalLength;
         const expectedWord = currentWord.chars
-            .filter(c => c.status !== 'extra')
+            .slice(0, originalLength)
             .map(c => c.char)
             .join('');
 
-        const finalChars: CharState[] = currentWord.chars.map((c, i) => {
+        const finalChars: CharState[] = currentWord.chars.slice(0, originalLength).map((c, i) => {
             const typedChar = typed[i];
-            if (c.status === 'extra') return c;
             if (!typedChar) return { char: c.char, status: 'incorrect' };
             return { char: c.char, status: typedChar === c.char ? 'correct' : 'incorrect' };
         });
@@ -113,6 +116,7 @@ export class TypingService {
 
         const wordCorrect = typed === expectedWord;
         words[idx] = {
+            ...currentWord,
             chars: [...finalChars, ...extraChars],
             status: wordCorrect ? 'correct' : 'incorrect',
         };
@@ -140,7 +144,8 @@ export class TypingService {
         if (!currentWord) return;
 
         const typedChars = input.split('');
-        const updatedChars: CharState[] = currentWord.chars.map((c, i) => {
+        const originalLength = currentWord.originalLength;
+        const updatedChars: CharState[] = currentWord.chars.slice(0, originalLength).map((c, i) => {
             if (i < typedChars.length) {
                 return { char: c.char, status: typedChars[i] === c.char ? 'correct' : 'incorrect' };
             }
@@ -148,7 +153,7 @@ export class TypingService {
         });
 
         const extraChars: CharState[] = typedChars
-            .slice(currentWord.chars.length)
+            .slice(originalLength)
             .map(c => ({ char: c, status: 'extra' as const }));
 
         words[idx] = { ...currentWord, chars: [...updatedChars, ...extraChars] };
