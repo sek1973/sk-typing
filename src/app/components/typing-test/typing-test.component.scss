@@ -91,7 +91,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.55rem 0.6rem;
-    height: 9.5rem;
+    height: max(9.5rem, calc(100dvh - 20rem));
     overflow: hidden;
     line-height: 1.8;
     font-size: 1.4rem;
