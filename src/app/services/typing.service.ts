@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 
 export type TestStatus = 'idle' | 'running' | 'finished';
+export type TestMode = 'words' | 'timed';
 
 export interface CharState {
     char: string;
@@ -30,6 +31,7 @@ export class TypingService {
     readonly currentWordIndex = signal(0);
     readonly currentInput = signal('');
     readonly status = signal<TestStatus>('idle');
+    readonly mode = signal<TestMode>('words');
     readonly timeLimit = signal(60); // seconds
     readonly elapsedTime = signal(0);
     readonly result = signal<TestResult | null>(null);
@@ -39,6 +41,10 @@ export class TypingService {
 
     readonly timeLeft = computed(() => Math.max(0, this.timeLimit() - this.elapsedTime()));
     readonly progress = computed(() => {
+        if (this.mode() === 'words') {
+            const total = this.words().length;
+            return total > 0 ? (this.currentWordIndex() / total) * 100 : 0;
+        }
         const total = this.timeLimit();
         return total > 0 ? (this.elapsedTime() / total) * 100 : 0;
     });
@@ -169,7 +175,7 @@ export class TypingService {
         this.timerInterval = setInterval(() => {
             const elapsed = Math.floor((Date.now() - this.startTimestamp!) / 1000);
             this.elapsedTime.set(elapsed);
-            if (elapsed >= this.timeLimit()) {
+            if (this.mode() === 'timed' && elapsed >= this.timeLimit()) {
                 this.finish();
             }
         }, 250);
@@ -222,6 +228,11 @@ export class TypingService {
         if (this.status() === 'idle') {
             this.timeLimit.set(seconds);
         }
+    }
+
+    setMode(mode: TestMode): void {
+        if (this.status() === 'running') return;
+        this.mode.set(mode);
     }
 
     private clearTimer(): void {

@@ -8,7 +8,7 @@ import {
     effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TypingService } from '../../services/typing.service';
+import { TypingService, TestMode } from '../../services/typing.service';
 import { WordSetService } from '../../services/word-set.service';
 import { ResultsComponent } from '../results/results.component';
 import { RouterLink } from '@angular/router';
@@ -89,6 +89,13 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
     setTimeLimit(seconds: number): void {
         this.typing.reset();
         this.typing.setTimeLimit(seconds);
+        this.initTest();
+        setTimeout(() => this.focusInput());
+    }
+
+    setMode(mode: TestMode): void {
+        this.typing.setMode(mode);
+        this.typing.reset();
         this.initTest();
         setTimeout(() => this.focusInput());
     }

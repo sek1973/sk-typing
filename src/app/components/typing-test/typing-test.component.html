@@ -2,6 +2,21 @@
      (click)="focusInput()">
     <!-- Toolbar -->
     <div class="toolbar">
+        <div class="mode-options">
+            <button class="time-btn"
+                    [class.active]="typing.mode() === 'words'"
+                    [disabled]="typing.status() === 'running'"
+                    (click)="$event.stopPropagation(); setMode('words')">
+                words
+            </button>
+            <button class="time-btn"
+                    [class.active]="typing.mode() === 'timed'"
+                    [disabled]="typing.status() === 'running'"
+                    (click)="$event.stopPropagation(); setMode('timed')">
+                timed
+            </button>
+        </div>
+        @if (typing.mode() === 'timed') {
         <div class="time-options">
             @for (t of timeLimits; track t) {
             <button class="time-btn"
@@ -12,6 +27,7 @@
             </button>
             }
         </div>
+        }
         <a class="upload-link"
            routerLink="/upload"
            (click)="$event.stopPropagation()">
@@ -19,11 +35,18 @@
         </a>
     </div>
 
-    <!-- Timer -->
-    @if (typing.status() === 'running' || typing.status() === 'finished') {
+    <!-- Timer (timed mode) -->
+    @if (typing.mode() === 'timed' && (typing.status() === 'running' || typing.status() === 'finished')) {
     <div class="timer"
          [class.low]="typing.timeLeft() <= 10">
         {{ typing.timeLeft() }}
+    </div>
+    }
+
+    <!-- Word progress (words mode) -->
+    @if (typing.mode() === 'words' && typing.status() === 'running') {
+    <div class="timer">
+        {{ typing.currentWordIndex() }}<span style="font-size:0.5em;opacity:0.5">/{{ typing.words().length }}</span>
     </div>
     }
 
