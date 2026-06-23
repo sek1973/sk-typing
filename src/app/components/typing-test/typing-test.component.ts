@@ -26,7 +26,7 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
     @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>;
     @ViewChild('wordsContainer') wordsContainerEl!: ElementRef<HTMLDivElement>;
 
-    protected timeLimits = [15, 30, 60, 120];
+    protected timeLimits = [30, 60, 90, 120];
 
     constructor() {
         // Auto-scroll current word into view
