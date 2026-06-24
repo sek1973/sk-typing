@@ -6,6 +6,7 @@ import {
     ViewChild,
     ElementRef,
     effect,
+    signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TypingService, TestMode } from '../../services/typing.service';
@@ -27,6 +28,7 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
     @ViewChild('wordsContainer') wordsContainerEl!: ElementRef<HTMLDivElement>;
 
     protected timeLimits = [30, 60, 90, 120];
+    protected inputFocused = signal(false);
 
     constructor() {
         // Auto-scroll current word into view
@@ -107,6 +109,14 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
 
     focusInput(): void {
         this.inputEl?.nativeElement.focus();
+    }
+
+    onInputFocus(): void {
+        this.inputFocused.set(true);
+    }
+
+    onInputBlur(): void {
+        this.inputFocused.set(false);
     }
 
     private scrollCurrentWordIntoView(idx: number): void {

@@ -75,7 +75,7 @@
                   [class.incorrect]="word.status === 'incorrect'">
                 @for (c of word.chars; track $index; let ci = $index) {
                 @if (wi === typing.currentWordIndex() && ci === typing.currentInput().length && (typing.status() ===
-                'running' || typing.status() === 'idle')) {
+                'running' || typing.status() === 'idle') && inputFocused()) {
                 <span class="cursor"></span>
                 }
                 <span class="char"
@@ -85,7 +85,7 @@
                       [class.extra]="c.status === 'extra'">{{ c.char }}</span>
                 }
                 @if (wi === typing.currentWordIndex() && typing.currentInput().length >= word.chars.length &&
-                (typing.status() === 'running' || typing.status() === 'idle')) {
+                (typing.status() === 'running' || typing.status() === 'idle') && inputFocused()) {
                 <span class="cursor"></span>
                 }
             </span>
@@ -104,6 +104,8 @@
            [value]="typing.currentInput()"
            (input)="onInput($event)"
            (keydown)="onKeydown($event)"
+           (focus)="onInputFocus()"
+           (blur)="onInputBlur()"
            [disabled]="typing.status() === 'finished'" />
 
     @if (typing.status() === 'idle') {
