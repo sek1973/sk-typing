@@ -43,10 +43,19 @@
     </div>
     }
 
-    <!-- Word progress (words mode) -->
-    @if (typing.mode() === 'words' && typing.status() === 'running') {
-    <div class="timer">
-        {{ typing.currentWordIndex() }}<span style="font-size:0.5em;opacity:0.5">/{{ typing.words().length }}</span>
+    <!-- Live stats -->
+    @if (typing.status() === 'running') {
+    <div class="live-stats">
+        <!-- Word progress (words mode) -->
+        @if (typing.mode() === 'words') {
+        <div class="timer">
+            {{ typing.currentWordIndex() }}<span style="font-size:0.5em;opacity:0.5">/{{ typing.words().length }}</span>
+        </div>
+        }
+        <span class="live-stat-sep">|</span>
+        <span class="live-stat-value">{{ typing.liveWpm() }}</span><span class="live-stat-label">wpm</span>
+        <span class="live-stat-sep">|</span>
+        <span class="live-stat-value">{{ typing.liveAccuracy() }}%</span><span class="live-stat-label">acc</span>
     </div>
     }
 

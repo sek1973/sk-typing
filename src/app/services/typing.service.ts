@@ -45,7 +45,36 @@ export class TypingService {
         this.customWordPool.set(words);
     }
 
-    readonly timeLeft = computed(() => Math.max(0, this.timeLimit() - this.elapsedTime()));
+    readonly timeLeft = computed(() => Math.max(0, Math.ceil(this.timeLimit() - this.elapsedTime())));
+
+    readonly liveWpm = computed(() => {
+        if (this.status() !== 'running') return 0;
+        const elapsed = this.elapsedTime();
+        if (elapsed === 0) return 0;
+        let correctChars = 0;
+        for (const word of this.words()) {
+            for (const c of word.chars) {
+                if (c.status === 'correct') correctChars++;
+            }
+        }
+        const minutes = elapsed / 60;
+        return Math.round(correctChars / 5 / minutes);
+    });
+
+    readonly liveAccuracy = computed(() => {
+        if (this.status() !== 'running') return 100;
+        let correctChars = 0;
+        let incorrectChars = 0;
+        for (const word of this.words()) {
+            for (const c of word.chars) {
+                if (c.status === 'correct') correctChars++;
+                else if (c.status === 'incorrect' || c.status === 'extra') incorrectChars++;
+            }
+        }
+        const total = correctChars + incorrectChars;
+        return total > 0 ? Math.round((correctChars / total) * 100) : 100;
+    });
+
     readonly progress = computed(() => {
         if (this.mode() === 'words') {
             const total = this.words().length;
@@ -189,7 +218,7 @@ export class TypingService {
         this.status.set('running');
         this.startTimestamp = Date.now();
         this.timerInterval = setInterval(() => {
-            const elapsed = Math.floor((Date.now() - this.startTimestamp!) / 1000);
+            const elapsed = (Date.now() - this.startTimestamp!) / 1000;
             this.elapsedTime.set(elapsed);
             if (this.mode() === 'timed' && elapsed >= this.timeLimit()) {
                 this.finish();

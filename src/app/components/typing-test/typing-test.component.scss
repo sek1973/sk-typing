@@ -80,6 +80,34 @@
     }
 }
 
+/* Live stats */
+.live-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.live-stat-value {
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--color-accent);
+}
+
+.live-stat-label {
+    font-size: 0.75rem;
+    color: var(--color-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.4rem;
+}
+
+.live-stat-sep {
+    color: var(--color-sub-alt);
+    font-size: 0.9rem;
+    margin: 0 0.2rem;
+}
+
 /* Words area */
 .words-wrapper {
     width: 100%;
