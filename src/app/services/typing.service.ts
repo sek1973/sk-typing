@@ -38,6 +38,7 @@ export class TypingService {
     readonly elapsedTime = signal(0);
     readonly result = signal<TestResult | null>(null);
     readonly customWordPool = signal<string[]>([]);
+    readonly totalErrors = signal(0);
 
     private startTimestamp: number | null = null;
     private timerInterval: ReturnType<typeof setInterval> | null = null;
@@ -65,14 +66,12 @@ export class TypingService {
     readonly liveAccuracy = computed(() => {
         if (this.status() !== 'running') return 100;
         let correctChars = 0;
-        let incorrectChars = 0;
         for (const word of this.words()) {
             for (const c of word.chars) {
                 if (c.status === 'correct') correctChars++;
-                else if (c.status === 'incorrect' || c.status === 'extra') incorrectChars++;
             }
         }
-        const total = correctChars + incorrectChars;
+        const total = correctChars + this.totalErrors();
         return total > 0 ? Math.round((correctChars / total) * 100) : 100;
     });
 
@@ -121,6 +120,22 @@ export class TypingService {
         if (input.endsWith(' ')) {
             this.commitWord(input.trimEnd());
             return;
+        }
+
+        // Count errors for newly typed characters (not backspace/corrections)
+        const prevInput = this.currentInput();
+        if (input.length > prevInput.length) {
+            const newCharIndex = input.length - 1;
+            const newChar = input[newCharIndex];
+            if (newCharIndex >= currentWord.originalLength) {
+                // Extra character beyond word length → always an error
+                this.totalErrors.update(e => e + 1);
+            } else {
+                const expectedChar = currentWord.chars[newCharIndex].char;
+                if (newChar !== expectedChar) {
+                    this.totalErrors.update(e => e + 1);
+                }
+            }
         }
 
         // Update char states for the current word
@@ -263,15 +278,14 @@ export class TypingService {
             : this.timeLimit();
 
         let correctChars = 0;
-        let incorrectChars = 0;
 
         for (const word of this.words()) {
             for (const c of word.chars) {
                 if (c.status === 'correct') correctChars++;
-                else if (c.status === 'incorrect' || c.status === 'extra') incorrectChars++;
             }
         }
 
+        const incorrectChars = this.totalErrors();
         const totalTypedChars = correctChars + incorrectChars;
         const minutes = elapsed / 60;
         const wpm = Math.round(correctChars / 5 / minutes);
@@ -294,6 +308,7 @@ export class TypingService {
         this.result.set(null);
         this.startTimestamp = null;
         this.words.set([]);
+        this.totalErrors.set(0);
     }
 
     setTimeLimit(seconds: number): void {
