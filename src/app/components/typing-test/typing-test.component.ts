@@ -91,10 +91,6 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
         if (event.key === 'Escape') {
             this.restart();
         }
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            this.restart();
-        }
     }
 
     setTimeLimit(seconds: number): void {

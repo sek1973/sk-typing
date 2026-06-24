@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, HostListener } from '@angular/core';
 import { TestResult } from '../../services/typing.service';
 
 @Component({
@@ -13,5 +13,13 @@ export class ResultsComponent {
 
     onRestart(): void {
         this.restart.emit();
+    }
+
+    @HostListener('document:keydown', ['$event'])
+    onKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Enter' || event.key === 'Escape') {
+            event.preventDefault();
+            this.restart.emit();
+        }
     }
 }
