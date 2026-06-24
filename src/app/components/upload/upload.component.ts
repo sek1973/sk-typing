@@ -58,7 +58,13 @@ export class UploadComponent {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            const text = e.target?.result as string;
+            const buffer = e.target?.result as ArrayBuffer;
+            let text: string;
+            try {
+                text = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+            } catch {
+                text = new TextDecoder('windows-1250').decode(buffer);
+            }
             const words = this.wordSets.parseTextFile(text, 300);
             if (words.length === 0) {
                 this.error.set('No words found in the file.');
@@ -72,7 +78,7 @@ export class UploadComponent {
         reader.onerror = () => {
             this.error.set('Failed to read the file.');
         };
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
     }
 
     startTest(): void {
