@@ -13,6 +13,7 @@ export interface WordState {
     originalLength: number;
     status: 'pending' | 'active' | 'correct' | 'incorrect';
     lineBreakBefore?: boolean;
+    typedInput?: string;
 }
 
 export interface TestResult {
@@ -172,6 +173,7 @@ export class TypingService {
             ...currentWord,
             chars: [...finalChars, ...extraChars],
             status: wordCorrect ? 'correct' : 'incorrect',
+            typedInput: typed,
         };
 
         const nextIdx = idx + 1;
@@ -195,6 +197,31 @@ export class TypingService {
         const idx = this.currentWordIndex();
         const currentWord = words[idx];
         if (!currentWord) return;
+
+        // Go back to previous word on same line when backspacing on empty input
+        if (input === '' && idx > 0 && !currentWord.lineBreakBefore) {
+            const prevWord = words[idx - 1];
+            const restoredInput = prevWord.typedInput ?? '';
+
+            // Reset current word to pending
+            words[idx] = {
+                ...currentWord,
+                status: 'pending',
+                chars: currentWord.chars.slice(0, currentWord.originalLength).map(c => ({
+                    char: c.char,
+                    status: 'pending' as const,
+                })),
+                typedInput: undefined,
+            };
+
+            // Restore previous word to active
+            words[idx - 1] = { ...prevWord, status: 'active' };
+
+            this.currentWordIndex.set(idx - 1);
+            this.currentInput.set(restoredInput);
+            this.words.set(words);
+            return;
+        }
 
         const typedChars = input.split('');
         const originalLength = currentWord.originalLength;

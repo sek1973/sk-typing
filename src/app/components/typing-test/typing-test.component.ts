@@ -77,11 +77,15 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
 
     onKeydown(event: KeyboardEvent): void {
         if (event.key === 'Backspace') {
-            const value = (event.target as HTMLInputElement).value;
             // Allow natural backspace; reflect updated value after DOM updates
             setTimeout(() => {
                 const updated = this.inputEl?.nativeElement.value ?? '';
                 this.typing.handleBackspace(updated);
+                // Sync input field when navigating back to a previous word
+                const currentInput = this.typing.currentInput();
+                if (this.inputEl && this.inputEl.nativeElement.value !== currentInput) {
+                    this.inputEl.nativeElement.value = currentInput;
+                }
             });
         }
         if (event.key === 'Escape') {
