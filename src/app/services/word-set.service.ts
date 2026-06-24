@@ -55,17 +55,27 @@ export class WordSetService {
     }
 
     parseTextFile(text: string, count = 200): string[] {
-        const tokens = text
-            .replace(/\r?\n/g, ' ')
-            .split(/\s+/)
-            .filter(w => w.length > 0);
+        const lines = text.split(/\r?\n/);
+        const allTokens: string[] = [];
+        for (const line of lines) {
+            const lineTokens = line.split(/\s+/).filter(w => w.length > 0);
+            if (lineTokens.length > 0) {
+                if (allTokens.length > 0) {
+                    allTokens.push('\n');
+                }
+                allTokens.push(...lineTokens);
+            }
+        }
 
-        if (tokens.length === 0) return [];
+        if (allTokens.length === 0) return [];
 
         const result: string[] = [];
+        let wordCount = 0;
         let pos = 0;
-        while (result.length < count) {
-            result.push(tokens[pos % tokens.length]);
+        while (wordCount < count) {
+            const token = allTokens[pos % allTokens.length];
+            result.push(token);
+            if (token !== '\n') wordCount++;
             pos++;
         }
         return result;

@@ -57,6 +57,9 @@
         <div class="words"
              #wordsContainer>
             @for (word of typing.words(); track $index; let wi = $index) {
+            @if (word.lineBreakBefore) {
+            <div class="line-break"></div>
+            }
             <span class="word"
                   [class.active]="wi === typing.currentWordIndex()"
                   [class.correct]="word.status === 'correct'"

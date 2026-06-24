@@ -12,6 +12,7 @@ export interface WordState {
     chars: CharState[];
     originalLength: number;
     status: 'pending' | 'active' | 'correct' | 'incorrect';
+    lineBreakBefore?: boolean;
 }
 
 export interface TestResult {
@@ -56,11 +57,21 @@ export class TypingService {
 
     loadWords(wordList: string[]): void {
         this.reset();
-        const wordStates: WordState[] = wordList.map((w, i) => ({
-            chars: w.split('').map(c => ({ char: c, status: 'pending' as const })),
-            originalLength: w.length,
-            status: i === 0 ? 'active' : 'pending',
-        }));
+        let nextLineBreak = false;
+        const wordStates: WordState[] = [];
+        for (const w of wordList) {
+            if (w === '\n') {
+                nextLineBreak = true;
+                continue;
+            }
+            wordStates.push({
+                chars: w.split('').map(c => ({ char: c, status: 'pending' as const })),
+                originalLength: w.length,
+                status: wordStates.length === 0 ? 'active' : 'pending',
+                lineBreakBefore: nextLineBreak || undefined,
+            });
+            nextLineBreak = false;
+        }
         this.words.set(wordStates);
     }
 
