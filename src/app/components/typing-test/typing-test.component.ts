@@ -46,9 +46,14 @@ export class TypingTestComponent implements AfterViewInit, OnDestroy {
     }
 
     initTest(): void {
-        const set = this.wordSets.builtInSets[0];
-        const words = this.wordSets.shuffle(set.words, 200);
-        this.typing.loadWords(words);
+        const customPool = this.typing.customWordPool();
+        if (customPool.length > 0) {
+            this.typing.loadWords(customPool);
+        } else {
+            const set = this.wordSets.builtInSets[0];
+            const words = this.wordSets.shuffle(set.words, 200);
+            this.typing.loadWords(words);
+        }
     }
 
     restart(): void {

@@ -35,9 +35,14 @@ export class TypingService {
     readonly timeLimit = signal(60); // seconds
     readonly elapsedTime = signal(0);
     readonly result = signal<TestResult | null>(null);
+    readonly customWordPool = signal<string[]>([]);
 
     private startTimestamp: number | null = null;
     private timerInterval: ReturnType<typeof setInterval> | null = null;
+
+    setCustomWordPool(words: string[]): void {
+        this.customWordPool.set(words);
+    }
 
     readonly timeLeft = computed(() => Math.max(0, this.timeLimit() - this.elapsedTime()));
     readonly progress = computed(() => {

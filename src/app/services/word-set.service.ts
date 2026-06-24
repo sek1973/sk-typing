@@ -58,7 +58,6 @@ export class WordSetService {
         const tokens = text
             .replace(/\r?\n/g, ' ')
             .split(/\s+/)
-            .map(w => w.replace(/[^a-zA-Z0-9''\-]/g, '').toLowerCase())
             .filter(w => w.length > 0);
 
         if (tokens.length === 0) return [];

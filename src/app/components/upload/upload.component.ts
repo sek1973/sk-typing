@@ -77,8 +77,7 @@ export class UploadComponent {
 
     startTest(): void {
         if (this.parsedWords.length === 0) return;
-        this.typing.reset();
-        this.typing.loadWords(this.parsedWords);
+        this.typing.setCustomWordPool(this.parsedWords);
         this.router.navigate(['/']);
     }
 
